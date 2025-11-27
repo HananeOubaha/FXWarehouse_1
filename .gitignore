@@ -1,0 +1,109 @@
+# Maven
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# Java
+*.class
+*.jar
+*.war
+*.ear
+*.log
+*.tmp
+hs_err_pid*
+replay_pid*
+
+# IDE - IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+.idea_modules/
+
+# IDE - Eclipse
+.project
+.classpath
+.settings/
+.metadata
+bin/
+tmp/
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.loadpath
+.recommenders
+
+# IDE - VS Code
+.vscode/
+*.code-workspace
+
+# IDE - NetBeans
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# Spring Boot
+spring-boot-devtools.properties
+application-local.properties
+application-dev.properties
+
+# Logs
+logs/
+*.log
+*.log.*
+*.gz
+
+# Test reports
+test_output.txt
+test_compile_log.txt
+compile_log.txt
+compile_output.txt
+test_compile_clean.txt
+test_compile_clean_utf8.txt
+test_output_2.txt
+test_output_2_utf8.txt
+test_output.log
+
+# JaCoCo
+jacoco.exec
+*.exec
+
+# Temporary files
+*.tmp
+*.log
+*~
+
+# Docker volumes (local development)
+.docker/
+
+# Environment variables
+.env
+.env.local
+
+# Database files (if using H2 or similar)
+*.db
+*.h2.db
+*.mv.db
+*.trace.db
