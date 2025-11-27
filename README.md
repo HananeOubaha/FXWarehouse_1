@@ -2,70 +2,70 @@
 
 ## Description
 
-Application Spring Boot permettant d'importer et de stocker des transactions FX (Foreign Exchange) dans une base de données PostgreSQL. Le système garantit l'idempotence (pas de doublons) et la persistance partielle (les transactions valides sont enregistrées même si d'autres échouent).
+Spring Boot application for importing and storing FX (Foreign Exchange) transactions in a PostgreSQL database. The system ensures **idempotence** (no duplicates) and **partial persistence** (valid transactions are saved even if others fail).
 
-## Fonctionnalités
+## Features
 
-✅ **Importation de transactions FX** via API REST  
-✅ **Validation des données** (champs requis, formats ISO 4217 pour devises)  
-✅ **Idempotence** : détection et rejet des doublons  
-✅ **Pas de rollback** : chaque transaction valide est enregistrée indépendamment  
-✅ **Gestion d'erreurs** robuste avec logging  
-✅ **Tests unitaires et d'intégration**  
-✅ **Docker Compose** pour déploiement facile
+✅ **Import FX transactions** via REST API
+✅ **Data validation** (required fields, ISO 4217 currency codes)
+✅ **Idempotence**: duplicate detection and rejection
+✅ **No rollback**: each valid transaction is saved independently
+✅ **Robust error handling** with logging
+✅ **Unit and integration tests**
+✅ **Docker Compose** for easy deployment
 
-## Prérequis
+## Prerequisites
 
-- **Java 17** ou supérieur
-- **Maven 3.9+**
-- **Docker** et **Docker Compose**
-- (Optionnel) **Make** pour les commandes simplifiées
+* **Java 17** or higher
+* **Maven 3.9+**
+* **Docker** and **Docker Compose**
+* (Optional) **Make** for simplified commands
 
 ## Installation
 
-### 1. Cloner le repository
+### 1. Clone the repository
 
 ```bash
 git clone <repository-url>
 cd clustered-data-warehouse
 ```
 
-### 2. Compiler le projet
+### 2. Build the project
 
 ```bash
 mvn clean package -DskipTests
 ```
 
-ou avec Make:
+or with Make:
 
 ```bash
 make build
 ```
 
-## Utilisation
+## Usage
 
-### Démarrer l'application avec Docker Compose
+### Start the application with Docker Compose
 
 ```bash
 docker-compose up --build
 ```
 
-ou avec Make:
+or with Make:
 
 ```bash
 make run
 ```
 
-L'application sera disponible sur `http://localhost:8080`  
-La base de données PostgreSQL sur le port `5432`
+The application will be available at `http://localhost:8080`
+The PostgreSQL database will be on port `5432`
 
-### Démarrer uniquement la base de données
+### Start only the database
 
 ```bash
 make run-db
 ```
 
-Puis lancer l'application localement:
+Then run the application locally:
 
 ```bash
 mvn spring-boot:run
@@ -73,16 +73,18 @@ mvn spring-boot:run
 
 ## API Endpoints
 
-### Importer des transactions
+### Import Transactions
 
 **POST** `/api/deals`
 
 **Headers:**
+
 ```
 Content-Type: application/json
 ```
 
-**Body (exemple):**
+**Body (example):**
+
 ```json
 [
   {
@@ -102,12 +104,13 @@ Content-Type: application/json
 ]
 ```
 
-**Réponse (201 Created):**
+**Response (201 Created):**
+
 ```
 Imported 2 deals. Skipped 0 duplicates/errors.
 ```
 
-### Tester avec curl
+### Test with curl
 
 ```bash
 curl -X POST http://localhost:8080/api/deals \
@@ -115,14 +118,14 @@ curl -X POST http://localhost:8080/api/deals \
   -d @sample-deals.json
 ```
 
-### Tester avec PowerShell
+### Test with PowerShell
 
 ```powershell
 $json = Get-Content sample-deals.json -Raw
 Invoke-WebRequest -Uri http://localhost:8080/api/deals -Method POST -Body $json -ContentType "application/json"
 ```
 
-## Structure du Projet
+## Project Structure
 
 ```
 clustered-data-warehouse/
@@ -156,17 +159,17 @@ clustered-data-warehouse/
 └── README.md
 ```
 
-## Validation des Données
+## Data Validation
 
-Le système valide automatiquement:
+The system automatically validates:
 
-- ✅ **dealUniqueId** : obligatoire, unique
-- ✅ **orderingCurrency** : obligatoire, format ISO 4217 (3 lettres majuscules)
-- ✅ **toCurrency** : obligatoire, format ISO 4217 (3 lettres majuscules)
-- ✅ **dealTimestamp** : obligatoire, format ISO 8601
-- ✅ **amount** : obligatoire, > 0
+* ✅ **dealUniqueId**: required, unique
+* ✅ **orderingCurrency**: required, ISO 4217 format (3 uppercase letters)
+* ✅ **toCurrency**: required, ISO 4217 format (3 uppercase letters)
+* ✅ **dealTimestamp**: required, ISO 8601 format
+* ✅ **amount**: required, > 0
 
-**Exemple d'erreur de validation (400 Bad Request):**
+**Example of validation error (400 Bad Request):**
 
 ```json
 {
@@ -177,50 +180,50 @@ Le système valide automatiquement:
 
 ## Tests
 
-### Exécuter tous les tests
+### Run all tests
 
 ```bash
 mvn test
 ```
 
-ou avec Make:
+or with Make:
 
 ```bash
 make test
 ```
 
-**Note:** Les tests d'intégration nécessitent Docker en cours d'exécution.
+**Note:** Integration tests require Docker to be running.
 
-### Exécuter uniquement les tests unitaires
+### Run only unit tests
 
 ```bash
 mvn test -Dtest=DealServiceTest
 ```
 
-ou avec Make:
+or with Make:
 
 ```bash
 make test-unit
 ```
 
-### Couverture des tests
+### Test Coverage
 
-- ✅ Tests unitaires du service (idempotence, validation)
-- ✅ Tests d'intégration avec Testcontainers (PostgreSQL)
+* ✅ Unit tests for service (idempotence, validation)
+* ✅ Integration tests with Testcontainers (PostgreSQL)
 
-## Gestion des Erreurs
+## Error Handling
 
 ### Idempotence
 
-Les transactions avec un `dealUniqueId` déjà existant sont **ignorées** (pas d'erreur). Le système log un avertissement et continue le traitement.
+Transactions with an already existing `dealUniqueId` are **ignored** (no error). The system logs a warning and continues processing.
 
-### Pas de Rollback
+### No Rollback
 
-Chaque transaction est traitée dans sa propre transaction Spring (`REQUIRES_NEW`). Si une transaction échoue, les autres continuent d'être traitées et enregistrées.
+Each transaction is processed in its own Spring transaction (`REQUIRES_NEW`). If a transaction fails, others continue to be processed and saved.
 
 ## Configuration
 
-Fichier `application.properties`:
+`application.properties` file:
 
 ```properties
 # Database
@@ -236,31 +239,31 @@ spring.jpa.show-sql=true
 logging.level.com.bloomberg.fx=DEBUG
 ```
 
-## Commandes Make
+## Make Commands
 
-| Commande | Description |
-|----------|-------------|
-| `make build` | Compiler le projet |
-| `make run` | Démarrer avec Docker Compose |
-| `make run-db` | Démarrer uniquement PostgreSQL |
-| `make stop` | Arrêter les conteneurs |
-| `make clean` | Nettoyer le projet et les volumes Docker |
-| `make test` | Exécuter tous les tests |
-| `make test-unit` | Exécuter les tests unitaires uniquement |
+| Command          | Description                      |
+| ---------------- | -------------------------------- |
+| `make build`     | Build the project                |
+| `make run`       | Start with Docker Compose        |
+| `make run-db`    | Start only PostgreSQL            |
+| `make stop`      | Stop containers                  |
+| `make clean`     | Clean project and Docker volumes |
+| `make test`      | Run all tests                    |
+| `make test-unit` | Run only unit tests              |
 
-## Technologies Utilisées
+## Technologies Used
 
-- **Spring Boot 3.2.3** (Web, Data JPA, Validation)
-- **PostgreSQL 15**
-- **Lombok** (réduction du boilerplate)
-- **Testcontainers** (tests d'intégration)
-- **Docker & Docker Compose**
-- **Maven**
+* **Spring Boot 3.2.3** (Web, Data JPA, Validation)
+* **PostgreSQL 15**
+* **Lombok** (reduce boilerplate)
+* **Testcontainers** (integration tests)
+* **Docker & Docker Compose**
+* **Maven**
 
-## Auteur
+## Author
 
-Développé pour Bloomberg - Projet Clustered Data Warehouse
+Developed for Bloomberg – Clustered Data Warehouse Project
 
-## Licence
+## License
 
-Tous droits réservés © 2025
+All rights reserved © 2025
