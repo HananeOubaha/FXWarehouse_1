@@ -262,7 +262,7 @@ logging.level.com.bloomberg.fx=DEBUG
 
 ## Author
 
-Developed for Bloomberg – Clustered Data Warehouse Project
+Hanane Oubaha – Clustered Data Warehouse Project
 
 ## License
 
